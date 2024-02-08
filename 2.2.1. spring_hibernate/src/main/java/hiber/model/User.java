@@ -34,6 +34,7 @@ public class User {
         this.email = email;
 
     }
+
     public User addCar(Car car) {
         car.setUser(this);
         this.setCar(car);
@@ -89,6 +90,7 @@ public class User {
                 ", email='" + email + '\'' +
                 '}';
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
