@@ -1,20 +1,10 @@
 package hiber.model;
 
-import org.springframework.context.annotation.Scope;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-@Scope("prototype")
 public class User {
 
     @Id
@@ -30,9 +20,10 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private Car userCar;
+    @OneToOne
+    @JoinColumn(name = "user")
+    @MapsId
+    private Car car;
 
     public User() {
     }
@@ -42,6 +33,11 @@ public class User {
         this.lastName = lastName;
         this.email = email;
 
+    }
+    public User addCar(Car car) {
+        car.setUser(this);
+        this.setCar(car);
+        return this;
     }
 
     public Long getId() {
@@ -76,20 +72,12 @@ public class User {
         this.email = email;
     }
 
-
-    public Car getUserCar() {
-        return userCar;
+    public Car getCar() {
+        return car;
     }
 
-    public void setUserCar(Car userCar) {
-        this.userCar = userCar;
-    }
-
-    public User addCar(Car car) {
-        car.setUser(this);
-        this.setUserCar(car);
-        return this;
-
+    public void setCar(Car userCar) {
+        this.car = userCar;
     }
 
     @Override
@@ -99,7 +87,19 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", userCar=" + userCar +
                 '}';
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(car, user.car);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, email, car);
+    }
+
 }
